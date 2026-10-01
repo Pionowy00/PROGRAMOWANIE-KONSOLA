@@ -56,8 +56,11 @@ Plik tekstowy przechowujący dane uczniów.
 Przykładowa zawartość:
 
 Jan Kowalski 18
+
 Anna Nowak 17
+
 Piotr Zielinski 19
+
 Maria Wisniewska 18
 
 README.md
@@ -100,15 +103,25 @@ Po uruchomieniu programu pojawia się menu:
 Wybor:
 
 Dostępne opcje
+
 Opcja	Działanie
+
 0	Zakończenie programu
+
 1	Wczytanie danych z pliku
+
 2	Wyświetlenie listy uczniów
+
 3	Zapisanie listy do pliku
+
 4	Dodanie ucznia
+
 5	Sortowanie według nazwiska
+
 6	Usunięcie ucznia
+
 ▶️ Uruchomienie
+
 Kompilacja
 
 Do kompilacji można wykorzystać kompilator g++.
