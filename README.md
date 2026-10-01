@@ -82,13 +82,21 @@ Jan Kowalski 18
 Po uruchomieniu programu pojawia się menu:
 
 ===== MENU =====
+
 0 - zakoncz program
+
 1 - wczytaj z pliku
+
 2 - wypisz
+
 3 - zapisz do pliku
+
 4 - dodaj ucznia
+
 5 - posortuj
+
 6 - usun ucznia o danym numerze
+
 Wybor:
 
 Dostępne opcje
