@@ -1,313 +1,159 @@
-# Data Structure Performance Comparison
+# Porównanie wydajności struktur danych
 
+Program służy do porównania czasu wykonywania wybranych operacji na trzech różnych strukturach danych w C++:
 
+- tablicy wbudowanej,
+- `vector`,
+- `list`.
 
-This program compares the time required to perform the same operations on three different C++ data structures:
+W ramach testu tworzonych jest 100 000 losowych wartości typu `short int`. Następnie dla każdej struktury wykonywane są operacje dodania elementu w środku, sortowania oraz usunięcia elementu. Całość jest mierzona za pomocą biblioteki `<chrono>`.
 
+## Przebieg testu
 
+Dla każdej z badanych struktur wykonywane są kolejno następujące czynności:
 
-- Built-in array
+1. Wygenerowanie i zapisanie 100 000 losowych liczb.
+2. Wylosowanie kolejnej wartości.
+3. Umieszczenie nowego elementu w połowie struktury.
+4. Posortowanie wszystkich elementów.
+5. Usunięcie elementu znajdującego się w środku.
+6. Zmierzenie całkowitego czasu wykonania powyższych operacji.
 
-- `vector`
+## Wykorzystane struktury danych
 
-- `list`
+### Tablica wbudowana
 
-
-
-The program generates 100,000 random numbers, inserts an additional number into the middle of each data structure, sorts the data, removes an element from the middle, and measures how long these operations take.
-
-
-
-## Operations Performed
-
-
-
-For each data structure, the program performs the following operations:
-
-
-
-1. Generate and store 100,000 random `short int` values.
-
-2. Generate one additional random value.
-
-3. Insert the new value into the middle of the data structure.
-
-4. Sort the entire data structure.
-
-5. Remove the element from the middle.
-
-6. Measure the total time taken for these operations.
-
-
-
-## Data Structures
-
-
-
-### Built-in Array
-
-
-
-The program uses:
-
-
+Do przechowywania danych wykorzystywana jest tablica o rozmiarze 100001 elementów:
 
 short int builtin[100001];
 
 
+Standardowa tablica C++ nie posiada funkcji umożliwiających bezpośrednie wstawianie i usuwanie elementów. Z tego powodu operacje te trzeba wykonać ręcznie.
 
-
-
-Since a built-in array has a fixed size and does not provide insertion or deletion operations, these operations are performed manually.
-
-
-
-To insert an element, existing elements are shifted one position to the right:
-
-
+Przy dodawaniu elementu w środku wszystkie wartości znajdujące się za wskazanym miejscem są przesuwane o jedną pozycję:
 
 for (int i = 100000; i > 50000; --i) { builtin[i] = builtin[i - 1]; }
 
 
+Po przesunięciu danych nowa wartość zostaje zapisana pod indeksem `50000`.
 
+Usuwanie elementu działa podobnie, jednak tym razem wartości znajdujące się za usuwanym elementem są przesuwane o jedną pozycję w lewo.
 
-
-The new element is then placed at index `50000`.
-
-
-
-To remove the element, the elements after it are shifted one position to the left.
-
-
-
-The array is sorted using:
-
-
+Do sortowania tablicy wykorzystano funkcję:
 
 sort(builtin, builtin + 100001);
 
 
-
-
-
 ### Vector
 
-
-
-The program uses:
-
-
+W przypadku wektora używany jest kontener:
 
 vector<short int> vec;
 
 
+W przeciwieństwie do zwykłej tablicy `vector` udostępnia gotowe funkcje do dodawania oraz usuwania elementów.
+
+Element w środku wektora jest dodawany za pomocą:
+
+vec.insert(vec.begin() + 50000, random_int);
 
 
-
-The vector provides built-in insertion and deletion operations:
-
-
-
-vec.insert(vec.begin() + 50000, random\_int);
-
-
-
-
-
-and:
-
-
+Natomiast jego usunięcie wykonuje:
 
 vec.erase(vec.begin() + 50000);
 
 
-
-
-
-The vector is sorted using:
-
-
+Sortowanie odbywa się przy użyciu:
 
 sort(vec.begin(), vec.end());
 
 
+Elementy wektora są przechowywane w ciągłym obszarze pamięci. W związku z tym dodanie lub usunięcie wartości ze środka powoduje konieczność przesunięcia części pozostałych elementów.
 
+### Lista
 
-
-Because a vector stores its elements contiguously in memory, inserting or removing an element from the middle requires the elements after that position to be moved.
-
-
-
-### Linked List
-
-
-
-The program uses:
-
-
+Trzecią badaną strukturą jest lista:
 
 list<short int> included;
 
 
-
-
-
-A linked list does not provide direct random access using an index. Therefore, an iterator is moved to the middle of the list using:
-
-
+Lista nie umożliwia bezpośredniego dostępu do elementu za pomocą indeksu. Aby dotrzeć do jej środka, iterator przesuwany jest odpowiednią liczbę pozycji:
 
 auto it = included.begin(); advance(it, included.size() / 2);
 
 
+Po znalezieniu odpowiedniego miejsca nowa wartość jest dodawana funkcją:
+
+included.insert(it, random_int);
 
 
-
-The element can then be inserted using:
-
-
-
-included.insert(it, random\_int);
-
-
-
-
-
-The list provides its own sorting function:
-
-
+Do sortowania listy wykorzystywana jest metoda dostępna bezpośrednio w kontenerze:
 
 included.sort();
 
 
-
-
-
-The middle element is found again and removed using:
-
-
+Po ponownym znalezieniu środkowego elementu można go usunąć:
 
 included.erase(it);
 
 
+## Pomiar czasu
 
-
-
-## Timing
-
-
-
-The program uses the C++ `<chrono>` library to measure execution time:
-
-
+Do sprawdzenia czasu wykonywania operacji wykorzystano bibliotekę `<chrono>`. Początek pomiaru jest zapisywany przed wykonaniem testowanych operacji:
 
 auto start = highresolutionclock::now();
 
 
-
-// Operations being measured
-
-
+Po zakończeniu wszystkich operacji pobierany jest czas końcowy:
 
 auto stop = highresolutionclock::now();
 
 
-
-
-
-The elapsed time is converted to microseconds:
-
-
+Różnica pomiędzy tymi wartościami jest następnie przeliczana na mikrosekundy:
 
 auto duration = duration_cast<microseconds>(stop - start);
 
 
+Uzyskany wynik jest wyświetlany w konsoli.
 
+## Generowanie liczb losowych
 
+Do tworzenia danych testowych wykorzystano mechanizmy znajdujące się w bibliotece `<random>`.
 
-The result is then printed to the console.
-
-
-
-## Random Number Generation
-
-
-
-The program generates random values using the `<random>` library.
-
-
-
-A Mersenne Twister random number generator is created:
-
-
+Generatorem liczb jest algorytm Mersenne Twister:
 
 mt19937 rng(rd());
 
 
-
-
-
-The values are generated within the range of a `short int`:
-
-
+Zakres generowanych wartości został dopasowany do typu `short int`:
 
 uniformintdistribution<int> uni(-32768, 32767);
 
 
+W efekcie program może wygenerować liczby całkowite od `-32768` do `32767`.
 
+## Przykładowy wynik
 
-
-This produces random numbers between `-32768` and `32767`.
-
-
-
-
-
-
-
-
-## Example Output
-
-
-
-The exact values will vary depending on the computer and compiler.
-
-
+Uzyskane czasy zależą między innymi od komputera, użytego kompilatora oraz aktualnego obciążenia systemu. Przykładowy rezultat może wyglądać następująco:
 
 Operations on builtin table took 12345 microseconds Operations on vector took 11234 microseconds Operations on list took 23456 microseconds
 
 
+Podane wartości są jedynie przykładem i podczas kolejnych uruchomień mogą być inne.
 
+## Na co zwrócić uwagę?
 
+Wynik pomiaru obejmuje **wstawianie elementu, sortowanie oraz jego późniejsze usunięcie**. Oznacza to, że otrzymane czasy nie pokazują wyłącznie różnic pomiędzy operacjami dodawania i usuwania.
 
-## Important Note
+Szczególnie istotny wpływ na końcowy rezultat może mieć sortowanie danych.
 
+Na uzyskane wyniki mogą również wpływać:
 
+- wydajność procesora,
+- ustawienia optymalizacji kompilatora,
+- obciążenie systemu operacyjnego,
+- sposób zarządzania pamięcią,
+- wygenerowane dane losowe,
+- implementacja biblioteki standardowej C++.
 
-The measured time includes **insertion, sorting, and removal** for each data structure.
-
-
-
-The sorting operation can have a significant effect on the total execution time, so the results do not represent only the performance of insertion and deletion.
-
-
-
-The results can also vary between runs because of:
-
-
-
-- CPU speed
-
-- Compiler optimizations
-
-- Operating system activity
-
-- Memory usage
-
-- Randomly generated input data
-
-- C++ standard library implementation
-
-
-
-For more reliable benchmarking, the program should ideally be run multiple times and the results averaged.
-
+Aby uzyskać bardziej wiarygodne rezultaty, warto wykonać test kilkukrotnie, a następnie obliczyć średni czas dla każdej ze struktur.
