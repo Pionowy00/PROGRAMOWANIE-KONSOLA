@@ -1,200 +1,313 @@
-📚 System zarządzania uczniami
+# Data Structure Performance Comparison
 
-Prosty program konsolowy napisany w C++, umożliwiający zarządzanie listą uczniów.
 
-Projekt został wykonany w ramach nauki programowania oraz przygotowania do egzaminu INF.04.
 
-✨ Funkcje
+This program compares the time required to perform the same operations on three different C++ data structures:
 
-Program umożliwia:
 
-📂 wczytywanie uczniów z pliku osoby.txt,
 
-👤 dodawanie nowych uczniów,
+- Built-in array
 
-📋 wyświetlanie listy uczniów,
+- `vector`
 
-🔤 sortowanie uczniów alfabetycznie według nazwiska,
+- `list`
 
-🗑️ usuwanie ucznia po numerze,
 
-💾 zapisywanie zmian do pliku,
 
-❌ anulowanie operacji usuwania,
+The program generates 100,000 random numbers, inserts an additional number into the middle of each data structure, sorts the data, removes an element from the middle, and measures how long these operations take.
 
-🚪 zakończenie programu.
 
-🛠️ Technologie
 
-C++
+## Operations Performed
 
-iostream – obsługa wejścia i wyjścia,
 
-fstream – obsługa plików,
 
-vector – przechowywanie listy uczniów,
+For each data structure, the program performs the following operations:
 
-algorithm – sortowanie,
 
-string – obsługa tekstu.
 
-📁 Struktura projektu
-projekt/
-│
-├── main.cpp
-├── osoby.txt
-└── README.md
+1. Generate and store 100,000 random `short int` values.
 
-main.cpp
+2. Generate one additional random value.
 
-Główny plik programu zawierający całą implementację aplikacji.
+3. Insert the new value into the middle of the data structure.
 
-osoby.txt
+4. Sort the entire data structure.
 
-Plik tekstowy przechowujący dane uczniów.
+5. Remove the element from the middle.
 
-Przykładowa zawartość:
+6. Measure the total time taken for these operations.
 
-Jan Kowalski 18
 
-Anna Nowak 17
 
-Piotr Zielinski 19
+## Data Structures
 
-Maria Wisniewska 18
 
-README.md
 
-Dokumentacja projektu.
+### Built-in Array
 
-📋 Format danych
 
-Każdy uczeń zajmuje jeden wiersz w pliku osoby.txt.
 
-Format:
+The program uses:
 
-imie nazwisko wiek
 
 
-Przykład:
+short int builtin[100001];
 
-Jan Kowalski 18
 
-🎮 Menu programu
 
-Po uruchomieniu programu pojawia się menu:
 
-===== MENU =====
 
-0 - zakoncz program
+Since a built-in array has a fixed size and does not provide insertion or deletion operations, these operations are performed manually.
 
-1 - wczytaj z pliku
 
-2 - wypisz
 
-3 - zapisz do pliku
+To insert an element, existing elements are shifted one position to the right:
 
-4 - dodaj ucznia
 
-5 - posortuj
 
-6 - usun ucznia o danym numerze
+for (int i = 100000; i > 50000; --i) { builtin[i] = builtin[i - 1]; }
 
-Wybor:
 
-Dostępne opcje
 
-Opcja	Działanie
 
-0	Zakończenie programu
 
-1	Wczytanie danych z pliku
+The new element is then placed at index `50000`.
 
-2	Wyświetlenie listy uczniów
 
-3	Zapisanie listy do pliku
 
-4	Dodanie ucznia
+To remove the element, the elements after it are shifted one position to the left.
 
-5	Sortowanie według nazwiska
 
-6	Usunięcie ucznia
 
-▶️ Uruchomienie
+The array is sorted using:
 
-Kompilacja
 
-Do kompilacji można wykorzystać kompilator g++.
 
-g++ main.cpp -o program
+sort(builtin, builtin + 100001);
 
-Uruchomienie
 
-Windows:
 
-program.exe
 
 
-Linux:
+### Vector
 
-./program
 
 
-Plik osoby.txt powinien znajdować się w katalogu, z którego uruchamiany jest program.
+The program uses:
 
-💡 Przykład działania
 
-Po uruchomieniu programu wybieramy opcję 1, aby wczytać dane:
 
-Wybor: 1
-Wczytano liste z pliku.
+vector<short int> vec;
 
 
-Następnie wybieramy 2:
 
-1. Jan Kowalski, 18 lat
-2. Anna Nowak, 17 lat
-3. Piotr Zielinski, 19 lat
 
 
-Możemy dodać kolejnego ucznia:
+The vector provides built-in insertion and deletion operations:
 
-Wybor: 4
-Podaj imie: Adam
-Podaj nazwisko: Wozniak
-Podaj wiek: 17
-Dodano ucznia.
 
 
-Po wykonaniu zmian wybieramy opcję 3, aby zapisać aktualną listę do pliku.
+vec.insert(vec.begin() + 50000, random\_int);
 
-🧩 Zastosowane rozwiązania
 
-Program wykorzystuje:
 
-strukturę Uczen do przechowywania danych ucznia,
 
-klasę Kolekcja do zarządzania listą,
 
-vector<Uczen> jako dynamiczną kolekcję danych,
+and:
 
-funkcję sort() do sortowania,
 
-operacje na plikach tekstowych,
 
-instrukcję switch do obsługi menu,
+vec.erase(vec.begin() + 50000);
 
-pętlę do...while do wielokrotnego wyświetlania menu.
 
-📌 Uwagi
 
-Zmiany wprowadzone podczas działania programu są wykonywane w pamięci. Aby zachować je po zakończeniu programu, należy użyć opcji:
 
-3 - zapisz do pliku
 
+The vector is sorted using:
 
-Jeżeli program zostanie zamknięty bez zapisania zmian, zmiany zostaną utracone.
 
-👨‍💻 Autor
 
-Projekt wykonany w języku C++ w ramach przygotowania do egzaminu INF.04.
+sort(vec.begin(), vec.end());
+
+
+
+
+
+Because a vector stores its elements contiguously in memory, inserting or removing an element from the middle requires the elements after that position to be moved.
+
+
+
+### Linked List
+
+
+
+The program uses:
+
+
+
+list<short int> included;
+
+
+
+
+
+A linked list does not provide direct random access using an index. Therefore, an iterator is moved to the middle of the list using:
+
+
+
+auto it = included.begin(); advance(it, included.size() / 2);
+
+
+
+
+
+The element can then be inserted using:
+
+
+
+included.insert(it, random\_int);
+
+
+
+
+
+The list provides its own sorting function:
+
+
+
+included.sort();
+
+
+
+
+
+The middle element is found again and removed using:
+
+
+
+included.erase(it);
+
+
+
+
+
+## Timing
+
+
+
+The program uses the C++ `<chrono>` library to measure execution time:
+
+
+
+auto start = highresolutionclock::now();
+
+
+
+// Operations being measured
+
+
+
+auto stop = highresolutionclock::now();
+
+
+
+
+
+The elapsed time is converted to microseconds:
+
+
+
+auto duration = duration_cast<microseconds>(stop - start);
+
+
+
+
+
+The result is then printed to the console.
+
+
+
+## Random Number Generation
+
+
+
+The program generates random values using the `<random>` library.
+
+
+
+A Mersenne Twister random number generator is created:
+
+
+
+mt19937 rng(rd());
+
+
+
+
+
+The values are generated within the range of a `short int`:
+
+
+
+uniformintdistribution<int> uni(-32768, 32767);
+
+
+
+
+
+This produces random numbers between `-32768` and `32767`.
+
+
+
+
+
+
+
+
+## Example Output
+
+
+
+The exact values will vary depending on the computer and compiler.
+
+
+
+Operations on builtin table took 12345 microseconds Operations on vector took 11234 microseconds Operations on list took 23456 microseconds
+
+
+
+
+
+## Important Note
+
+
+
+The measured time includes **insertion, sorting, and removal** for each data structure.
+
+
+
+The sorting operation can have a significant effect on the total execution time, so the results do not represent only the performance of insertion and deletion.
+
+
+
+The results can also vary between runs because of:
+
+
+
+- CPU speed
+
+- Compiler optimizations
+
+- Operating system activity
+
+- Memory usage
+
+- Randomly generated input data
+
+- C++ standard library implementation
+
+
+
+For more reliable benchmarking, the program should ideally be run multiple times and the results averaged.
+
