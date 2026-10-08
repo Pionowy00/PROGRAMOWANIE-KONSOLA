@@ -10,159 +10,152 @@ using namespace std::chrono;
 
 int main()
 {
-    // Variable used to store each randomly generated number.
-    // short int can store values from -32768 to 32767.
+    // Zmienna przechowujaca aktualnie wygenerowana liczbe.
+    // Typ short int pozwala przechowywac wartosci od -32768 do 32767.
     short int random_int;
 
-    // Create a random number generator.
-    // random_device is used to create a seed for the generator.
+    // Uruchomienie generatora liczb losowych.
+    // random_device dostarcza wartosc poczatkowa dla generatora mt19937.
     random_device rd;
     mt19937 rng(rd());
 
-    // Set the range of random numbers that can be generated.
+    // Ustalenie zakresu losowanych wartosci.
     uniform_int_distribution<int> uni(-32768, 32767);
 
-    // Create a built-in array capable of holding 100001 short integers.
+    // Utworzenie tablicy pozwalajacej przechowac 100001 elementow.
     short int builtin[100001];
 
-    // Create a vector and a linked list.
+    // Utworzenie wektora oraz listy, ktore beda wykorzystane w tescie.
     vector<short int> vec;
     list<short int> included;
 
-    // Fill all three data structures with 100000 random numbers.
+    // Wypelnienie wszystkich trzech struktur 100000 losowymi liczbami.
     for (int i = 0; i < 100000; i++)
     {
-        // Generate a random number.
+        // Wylosowanie kolejnej liczby.
         random_int = uni(rng);
 
-        // Add the number to the built-in array.
+        // Zapisanie liczby w tablicy.
         builtin[i] = random_int;
 
-        // Add the number to the vector.
+        // Dodanie liczby na koncu wektora.
         vec.push_back(random_int);
 
-        // Add the number to the linked list.
+        // Dodanie liczby na koncu listy.
         included.push_back(random_int);
     }
 
-    // Generate another random number.
-    // This number will be inserted into each data structure.
+    // Wylosowanie dodatkowej wartosci, ktora zostanie
+    // pozniej dodana w srodkowym miejscu kazdej struktury.
     random_int = uni(rng);
 
 
     // ============================================================
-    // BUILT-IN ARRAY
+    // TABLICA WBUDOWANA
     // ============================================================
 
-    // Record the starting time before performing the operations.
+    // Rozpoczecie pomiaru czasu dla operacji wykonywanych na tablicy.
     auto start = high_resolution_clock::now();
 
-    // Move all elements from position 50000 onwards one position
-    // to the right. This creates an empty position at index 50000.
-    //
-    // The loop starts at 100000 because the array has an extra
-    // element available at that position.
+    // Przesuniecie elementow znajdujacych sie od pozycji 50000
+    // o jedno miejsce w prawo, aby przygotowac miejsce na nowa wartosc.
     for (int i = 100000; i > 50000; --i)
     {
         builtin[i] = builtin[i - 1];
     }
 
-    // Insert the new random number at the middle of the array.
+    // Wstawienie nowej liczby w srodkowej pozycji tablicy.
     builtin[50000] = random_int;
 
-    // Sort the entire array into ascending order.
+    // Posortowanie wszystkich elementow tablicy rosnaco.
     sort(builtin, builtin + 100001);
 
-    // Remove the element at position 50000 by shifting all
-    // following elements one position to the left.
+    // Przesuniecie pozostalych elementow o jedno miejsce w lewo.
+    // W ten sposob element ze srodka zostaje usuniety.
     for (int i = 50000; i < 100000; i++)
     {
         builtin[i] = builtin[i + 1];
     }
 
-    // Record the finishing time.
+    // Zakonczenie pomiaru czasu.
     auto stop = high_resolution_clock::now();
 
-    // Calculate how much time the operations took.
+    // Przeliczenie zmierzonego czasu na mikrosekundy.
     auto duration = duration_cast<microseconds>(stop - start);
 
-    // Display the time taken.
+    // Wyswietlenie wyniku dla tablicy.
     cout << "Operations on builtin table took "
-         << duration.count() << " ns" << endl;
+         << duration.count() << " microseconds" << endl;
 
 
     // ============================================================
     // VECTOR
     // ============================================================
 
-    // Start the timer before performing the vector operations.
+    // Rozpoczecie pomiaru czasu dla operacji na wektorze.
     start = high_resolution_clock::now();
 
-    // Insert the random number at the middle of the vector.
-    // Elements after this position have to be shifted to make room.
+    // Dodanie nowej wartosci w polowie wektora.
+    // Elementy znajdujace sie dalej musza zostac przesuniete.
     vec.insert(vec.begin() + 50000, random_int);
 
-    // Sort all elements in the vector into ascending order.
+    // Posortowanie wszystkich elementow wektora.
     sort(vec.begin(), vec.end());
 
-    // Remove the element at position 50000.
-    // Elements after it are shifted to fill the empty space.
+    // Usuniecie elementu znajdujacego sie na pozycji 50000.
     vec.erase(vec.begin() + 50000);
 
-    // Stop the timer.
+    // Zakonczenie pomiaru czasu dla wektora.
     stop = high_resolution_clock::now();
 
-    // Calculate the elapsed time.
+    // Obliczenie czasu potrzebnego na wykonanie operacji.
     duration = duration_cast<microseconds>(stop - start);
 
-    // Display the time taken.
+    // Wyswietlenie uzyskanego wyniku.
     cout << "Operations on vector took "
-         << duration.count() << " ns" << endl;
+         << duration.count() << " microseconds" << endl;
 
 
     // ============================================================
-    // LINKED LIST
+    // LISTA LACZONA
     // ============================================================
 
-    // Start the timer before performing the list operations.
+    // Rozpoczecie pomiaru czasu dla operacji wykonywanych na liscie.
     start = high_resolution_clock::now();
 
-    // Create an iterator pointing to the beginning of the list.
+    // Utworzenie iteratora wskazujacego na poczatek listy.
     auto it = included.begin();
 
-    // Move the iterator to the middle of the list.
-    // Unlike a vector, a list cannot directly access an element
-    // using an index, so advance() must be used.
+    // Przesuniecie iteratora do srodka listy.
+    // Lista nie pozwala na bezposredni dostep za pomoca indeksu,
+    // dlatego konieczne jest przejscie przez kolejne elementy.
     advance(it, included.size() / 2);
 
-    // Insert the random number at the iterator's position.
-    // Inserting into a linked list does not require shifting
-    // all the following elements.
+    // Wstawienie nowej wartosci w miejscu wskazywanym przez iterator.
+    // W przypadku listy nie trzeba przesuwac wszystkich kolejnych elementow.
     included.insert(it, random_int);
 
-    // Sort the linked list.
-    // list has its own sort() function because std::sort()
-    // requires random-access iterators, which a list does not have.
+    // Posortowanie elementow listy przy pomocy jej wlasnej metody.
     included.sort();
 
-    // Reset the iterator to the beginning of the list.
+    // Ustawienie iteratora ponownie na poczatku listy.
     it = included.begin();
 
-    // Move the iterator to the middle of the list again.
+    // Ponowne przejscie do srodkowego elementu.
     advance(it, included.size() / 2);
 
-    // Remove the element at the middle position.
+    // Usuniecie elementu wskazywanego przez iterator.
     included.erase(it);
 
-    // Stop the timer.
+    // Zakonczenie pomiaru czasu dla listy.
     stop = high_resolution_clock::now();
 
-    // Calculate the elapsed time.
+    // Przeliczenie wyniku na mikrosekundy.
     duration = duration_cast<microseconds>(stop - start);
 
-    // Display the time taken.
+    // Wyswietlenie czasu wykonania operacji na liscie.
     cout << "Operations on list took "
-         << duration.count() << " ns" << endl;
+         << duration.count() << " microseconds" << endl;
 
     return 0;
 }
