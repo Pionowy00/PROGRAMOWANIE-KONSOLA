@@ -1,256 +1,168 @@
 #include <iostream>
-#include <string>
-#include <fstream>
+#include <chrono>
+#include <random>
+#include <list>
 #include <vector>
 #include <algorithm>
 
 using namespace std;
+using namespace std::chrono;
 
-// Struktura przechowuj¹ca dane jednego ucznia.
-struct Uczen
-{
-    string imie, nazwisko;
-    int wiek;
-};
-
-// Klasa przechowuj¹ca i obs³uguj¹ca kolekcjê uczniów.
-class Kolekcja
-{
-private:
-    // Wektor przechowuj¹cy wszystkich uczniów.
-    vector<Uczen> lista_uczniow;
-
-public:
-    // Konstruktor klasy Kolekcja.
-    Kolekcja()
-    {
-    }
-
-    // Destruktor klasy Kolekcja.
-    ~Kolekcja()
-    {
-    }
-
-    // Dodaje podanego ucznia na koniec wektora.
-    void dodaj_ucznia(Uczen u)
-    {
-        lista_uczniow.push_back(u);
-    }
-
-    // Wczytuje dane uczniów z pliku tekstowego.
-    void wczytaj(string nazwa_pliku)
-    {
-        // Otwarcie pliku do odczytu.
-        ifstream plik(nazwa_pliku);
-
-        // Sprawdzenie, czy plik zosta³ poprawnie otwarty.
-        if (!plik)
-        {
-            cout << "Nie udalo sie otworzyc pliku!" << endl;
-            return;
-        }
-
-        Uczen uczen;
-
-        // Odczytywanie kolejnych danych uczniów do momentu
-        // wyst¹pienia koñca pliku lub b³êdu odczytu.
-        while (plik >> uczen.imie >> uczen.nazwisko >> uczen.wiek)
-        {
-            lista_uczniow.push_back(uczen);
-        }
-
-        // Zamkniêcie pliku.
-        plik.close();
-    }
-
-    // Zapisuje wszystkich uczniów do pliku tekstowego.
-    void zapisz(string nazwa_pliku)
-    {
-        // Otwarcie pliku do zapisu.
-        ofstream plik(nazwa_pliku);
-
-        // Sprawdzenie, czy plik zosta³ poprawnie otwarty.
-        if (!plik)
-        {
-            cout << "Nie udalo sie otworzyc pliku!" << endl;
-            return;
-        }
-
-        // Zapisanie wszystkich elementów wektora do pliku.
-        for (int i = 0; i < lista_uczniow.size(); i++)
-        {
-            plik << lista_uczniow[i].imie << " "
-                 << lista_uczniow[i].nazwisko << " "
-                 << lista_uczniow[i].wiek << endl;
-        }
-
-        // Zamkniêcie pliku.
-        plik.close();
-    }
-
-    // Wyœwietla wszystkich uczniów znajduj¹cych siê w kolekcji.
-    void wyswietl()
-    {
-        // Przejœcie przez wszystkie elementy wektora.
-        for (int i = 0; i < lista_uczniow.size(); i++)
-        {
-            cout << i + 1 << ". "
-                 << lista_uczniow[i].imie << " "
-                 << lista_uczniow[i].nazwisko << ", "
-                 << lista_uczniow[i].wiek << " lat" << endl;
-        }
-    }
-
-    // Sortuje uczniów alfabetycznie wed³ug nazwiska.
-    void sortuj()
-    {
-        sort(lista_uczniow.begin(), lista_uczniow.end(),
-             [](const Uczen& a, const Uczen& b)
-             {
-                 return a.nazwisko < b.nazwisko;
-             });
-    }
-
-    // Usuwa ucznia o podanym numerze z kolekcji.
-    void usun_ucznia(int numer)
-    {
-        // Wartoœæ 0 oznacza anulowanie operacji usuwania.
-        if(numer == 0)
-        {
-            cout << "anulowano usuwanie ucznia" << endl;
-            return;
-        }
-
-        // Sprawdzenie, czy podany numer ucznia jest poprawny.
-        if (numer < 1 || numer > lista_uczniow.size())
-        {
-            cout << "Nieprawidlowy numer ucznia!" << endl;
-            return;
-        }
-
-        // Usuniêcie ucznia z wektora na podstawie jego numeru.
-        lista_uczniow.erase(lista_uczniow.begin() + numer - 1);
-
-        cout << "Uczen zostal usuniety." << endl;
-    }
-};
-
-// Funkcja odpowiedzialna za obs³ugê menu programu.
-void menu(Kolekcja& kolekcja)
-{
-    // Zmienna okreœlaj¹ca, czy u¿ytkownik chce zakoñczyæ program.
-    bool koniec = false;
-
-    // Domyœlna nazwa pliku przechowuj¹cego dane uczniów.
-    string nazwa_pliku = "osoby.txt";
-
-    // Pêtla menu wykonywana do momentu wybrania opcji 0.
-    do
-    {
-        int wybor;
-
-        // Wyœwietlenie dostêpnych opcji programu.
-        cout << endl;
-        cout << "===== MENU =====" << endl;
-        cout << "0 - zakoncz program" << endl;
-        cout << "1 - wczytaj z pliku" << endl;
-        cout << "2 - wypisz" << endl;
-        cout << "3 - zapisz do pliku" << endl;
-        cout << "4 - dodaj ucznia" << endl;
-        cout << "5 - posortuj" << endl;
-        cout << "6 - usun ucznia o danym numerze" << endl;
-        cout << "Wybor: ";
-
-        // Pobranie wyboru u¿ytkownika.
-        cin >> wybor;
-
-        // Wykonanie odpowiedniej operacji na podstawie wyboru u¿ytkownika.
-        switch (wybor)
-        {
-        // Zakoñczenie dzia³ania programu.
-        case 0:
-            koniec = true;
-            break;
-
-        // Wczytanie danych uczniów z pliku.
-        case 1:
-            kolekcja.wczytaj(nazwa_pliku);
-            cout << "Wczytano liste z pliku. Wszystkie zmiany w liscie sa w wersji roboczej. By je zapisac, po edycji listy wybierz opcje 3." << endl;
-            break;
-
-        // Wyœwietlenie zawartoœci kolekcji.
-        case 2:
-            kolekcja.wyswietl();
-            break;
-
-        // Zapisanie aktualnej zawartoœci kolekcji do pliku.
-        case 3:
-            kolekcja.zapisz(nazwa_pliku);
-            cout << "Zapisano liste do pliku " << nazwa_pliku << endl;
-            break;
-
-        // Dodanie nowego ucznia.
-        case 4:
-        {
-            Uczen uczen;
-
-            // Pobranie danych nowego ucznia od u¿ytkownika.
-            cout << "Podaj imie: ";
-            cin >> uczen.imie;
-
-            cout << "Podaj nazwisko: ";
-            cin >> uczen.nazwisko;
-
-            cout << "Podaj wiek: ";
-            cin >> uczen.wiek;
-
-            // Dodanie utworzonego ucznia do kolekcji.
-            kolekcja.dodaj_ucznia(uczen);
-
-            cout << "Dodano ucznia. By zapisac liste, wybierz opcje 3." << endl;
-            break;
-        }
-
-        // Posortowanie uczniów wed³ug nazwiska.
-        case 5:
-            kolekcja.sortuj();
-            cout << "Lista zostala posortowana. By zapisac posortowana liste, wybierz opcje 3." << endl;
-            break;
-
-        // Usuniêcie ucznia o podanym numerze.
-        case 6:
-        {
-            int numer;
-
-            // U¿ytkownik mo¿e anulowaæ operacjê, podaj¹c 0.
-            cout << "Jesli chcesz anulowac usuniecie ucznia, wybierz liczbe 0." << endl;
-            cout << "Podaj numer ucznia do usuniecia: ";
-            cin >> numer;
-
-            // Wywo³anie funkcji usuwaj¹cej ucznia.
-            kolekcja.usun_ucznia(numer);
-            break;
-        }
-
-        // Obs³uga nieprawid³owego wyboru z menu.
-        default:
-            cout << "Nieprawidlowa opcja!" << endl;
-            break;
-        }
-
-    // Ponowne wyœwietlanie menu, dopóki u¿ytkownik nie wybierze 0.
-    } while (!koniec);
-}
-
-// Funkcja g³ówna programu.
 int main()
 {
-    // Utworzenie obiektu klasy Kolekcja.
-    Kolekcja kolekcja;
+    // Variable used to store each randomly generated number.
+    // short int can store values from -32768 to 32767.
+    short int random_int;
 
-    // Uruchomienie g³ównego menu programu.
-    menu(kolekcja);
+    // Create a random number generator.
+    // random_device is used to create a seed for the generator.
+    random_device rd;
+    mt19937 rng(rd());
 
-    // Zakoñczenie programu.
+    // Set the range of random numbers that can be generated.
+    uniform_int_distribution<int> uni(-32768, 32767);
+
+    // Create a built-in array capable of holding 100001 short integers.
+    short int builtin[100001];
+
+    // Create a vector and a linked list.
+    vector<short int> vec;
+    list<short int> included;
+
+    // Fill all three data structures with 100000 random numbers.
+    for (int i = 0; i < 100000; i++)
+    {
+        // Generate a random number.
+        random_int = uni(rng);
+
+        // Add the number to the built-in array.
+        builtin[i] = random_int;
+
+        // Add the number to the vector.
+        vec.push_back(random_int);
+
+        // Add the number to the linked list.
+        included.push_back(random_int);
+    }
+
+    // Generate another random number.
+    // This number will be inserted into each data structure.
+    random_int = uni(rng);
+
+
+    // ============================================================
+    // BUILT-IN ARRAY
+    // ============================================================
+
+    // Record the starting time before performing the operations.
+    auto start = high_resolution_clock::now();
+
+    // Move all elements from position 50000 onwards one position
+    // to the right. This creates an empty position at index 50000.
+    //
+    // The loop starts at 100000 because the array has an extra
+    // element available at that position.
+    for (int i = 100000; i > 50000; --i)
+    {
+        builtin[i] = builtin[i - 1];
+    }
+
+    // Insert the new random number at the middle of the array.
+    builtin[50000] = random_int;
+
+    // Sort the entire array into ascending order.
+    sort(builtin, builtin + 100001);
+
+    // Remove the element at position 50000 by shifting all
+    // following elements one position to the left.
+    for (int i = 50000; i < 100000; i++)
+    {
+        builtin[i] = builtin[i + 1];
+    }
+
+    // Record the finishing time.
+    auto stop = high_resolution_clock::now();
+
+    // Calculate how much time the operations took.
+    auto duration = duration_cast<microseconds>(stop - start);
+
+    // Display the time taken.
+    cout << "Operations on builtin table took "
+         << duration.count() << " ns" << endl;
+
+
+    // ============================================================
+    // VECTOR
+    // ============================================================
+
+    // Start the timer before performing the vector operations.
+    start = high_resolution_clock::now();
+
+    // Insert the random number at the middle of the vector.
+    // Elements after this position have to be shifted to make room.
+    vec.insert(vec.begin() + 50000, random_int);
+
+    // Sort all elements in the vector into ascending order.
+    sort(vec.begin(), vec.end());
+
+    // Remove the element at position 50000.
+    // Elements after it are shifted to fill the empty space.
+    vec.erase(vec.begin() + 50000);
+
+    // Stop the timer.
+    stop = high_resolution_clock::now();
+
+    // Calculate the elapsed time.
+    duration = duration_cast<microseconds>(stop - start);
+
+    // Display the time taken.
+    cout << "Operations on vector took "
+         << duration.count() << " ns" << endl;
+
+
+    // ============================================================
+    // LINKED LIST
+    // ============================================================
+
+    // Start the timer before performing the list operations.
+    start = high_resolution_clock::now();
+
+    // Create an iterator pointing to the beginning of the list.
+    auto it = included.begin();
+
+    // Move the iterator to the middle of the list.
+    // Unlike a vector, a list cannot directly access an element
+    // using an index, so advance() must be used.
+    advance(it, included.size() / 2);
+
+    // Insert the random number at the iterator's position.
+    // Inserting into a linked list does not require shifting
+    // all the following elements.
+    included.insert(it, random_int);
+
+    // Sort the linked list.
+    // list has its own sort() function because std::sort()
+    // requires random-access iterators, which a list does not have.
+    included.sort();
+
+    // Reset the iterator to the beginning of the list.
+    it = included.begin();
+
+    // Move the iterator to the middle of the list again.
+    advance(it, included.size() / 2);
+
+    // Remove the element at the middle position.
+    included.erase(it);
+
+    // Stop the timer.
+    stop = high_resolution_clock::now();
+
+    // Calculate the elapsed time.
+    duration = duration_cast<microseconds>(stop - start);
+
+    // Display the time taken.
+    cout << "Operations on list took "
+         << duration.count() << " ns" << endl;
+
     return 0;
 }
