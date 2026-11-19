@@ -1,200 +1,47 @@
-📚 System zarządzania uczniami
+# Drzewo binarne w C++
 
-Prosty program konsolowy napisany w C++, umożliwiający zarządzanie listą uczniów.
+## Opis projektu
+Program przedstawia implementację zwykłego drzewa binarnego wyszukiwania (BST) w języku C++. Umożliwia dodawanie liczb do drzewa, wyświetlanie jego struktury w konsoli oraz usuwanie całego drzewa z pamięci.
 
-Projekt został wykonany w ramach nauki programowania oraz przygotowania do egzaminu INF.04.
+## Zasady działania
+- Korzeń jest pierwszym dodanym elementem.
+- Liczby mniejsze lub równe wartości węzła trafiają do lewego poddrzewa.
+- Liczby większe od wartości węzła trafiają do prawego poddrzewa.
 
-✨ Funkcje
+## Funkcje
 
-Program umożliwia:
+### `dodaj(drzewo *&d, int liczba)`
+Dodaje nową liczbę do drzewa zgodnie z zasadami BST. Jeśli napotka wolne miejsce (`NULL`), tworzy nowy węzeł.
 
-📂 wczytywanie uczniów z pliku osoby.txt,
+### `wypisz(drzewo *d, int poziom = 0)`
+Wyświetla drzewo w konsoli z zachowaniem jego struktury. Wykorzystuje wcięcia zależne od poziomu drzewa. Najpierw wypisywane jest prawe poddrzewo, następnie korzeń, a na końcu lewe poddrzewo.
 
-👤 dodawanie nowych uczniów,
+### `usun(drzewo *d)`
+Usuwa wszystkie elementy drzewa z pamięci. Najpierw usuwa poddrzewa, a następnie aktualny węzeł.
 
-📋 wyświetlanie listy uczniów,
+## Struktura węzła
+Każdy element drzewa przechowuje:
+- `liczba` – wartość węzła.
+- `lewy` – wskaźnik na lewe poddrzewo.
+- `prawy` – wskaźnik na prawe poddrzewo.
 
-🔤 sortowanie uczniów alfabetycznie według nazwiska,
+## Przykład użycia
 
-🗑️ usuwanie ucznia po numerze,
+```cpp
+drzewo *d = NULL;
 
-💾 zapisywanie zmian do pliku,
+dodaj(d, 3);
+dodaj(d, 5);
+dodaj(d, 1);
+dodaj(d, 7);
+dodaj(d, 2);
 
-❌ anulowanie operacji usuwania,
+wypisz(d);
 
-🚪 zakończenie programu.
+usun(d);
+```
 
-🛠️ Technologie
-
-C++
-
-iostream – obsługa wejścia i wyjścia,
-
-fstream – obsługa plików,
-
-vector – przechowywanie listy uczniów,
-
-algorithm – sortowanie,
-
-string – obsługa tekstu.
-
-📁 Struktura projektu
-projekt/
-│
-├── main.cpp
-├── osoby.txt
-└── README.md
-
-main.cpp
-
-Główny plik programu zawierający całą implementację aplikacji.
-
-osoby.txt
-
-Plik tekstowy przechowujący dane uczniów.
-
-Przykładowa zawartość:
-
-Jan Kowalski 18
-
-Anna Nowak 17
-
-Piotr Zielinski 19
-
-Maria Wisniewska 18
-
-README.md
-
-Dokumentacja projektu.
-
-📋 Format danych
-
-Każdy uczeń zajmuje jeden wiersz w pliku osoby.txt.
-
-Format:
-
-imie nazwisko wiek
-
-
-Przykład:
-
-Jan Kowalski 18
-
-🎮 Menu programu
-
-Po uruchomieniu programu pojawia się menu:
-
-===== MENU =====
-
-0 - zakoncz program
-
-1 - wczytaj z pliku
-
-2 - wypisz
-
-3 - zapisz do pliku
-
-4 - dodaj ucznia
-
-5 - posortuj
-
-6 - usun ucznia o danym numerze
-
-Wybor:
-
-Dostępne opcje
-
-Opcja	Działanie
-
-0	Zakończenie programu
-
-1	Wczytanie danych z pliku
-
-2	Wyświetlenie listy uczniów
-
-3	Zapisanie listy do pliku
-
-4	Dodanie ucznia
-
-5	Sortowanie według nazwiska
-
-6	Usunięcie ucznia
-
-▶️ Uruchomienie
-
-Kompilacja
-
-Do kompilacji można wykorzystać kompilator g++.
-
-g++ main.cpp -o program
-
-Uruchomienie
-
-Windows:
-
-program.exe
-
-
-Linux:
-
-./program
-
-
-Plik osoby.txt powinien znajdować się w katalogu, z którego uruchamiany jest program.
-
-💡 Przykład działania
-
-Po uruchomieniu programu wybieramy opcję 1, aby wczytać dane:
-
-Wybor: 1
-Wczytano liste z pliku.
-
-
-Następnie wybieramy 2:
-
-1. Jan Kowalski, 18 lat
-2. Anna Nowak, 17 lat
-3. Piotr Zielinski, 19 lat
-
-
-Możemy dodać kolejnego ucznia:
-
-Wybor: 4
-Podaj imie: Adam
-Podaj nazwisko: Wozniak
-Podaj wiek: 17
-Dodano ucznia.
-
-
-Po wykonaniu zmian wybieramy opcję 3, aby zapisać aktualną listę do pliku.
-
-🧩 Zastosowane rozwiązania
-
-Program wykorzystuje:
-
-strukturę Uczen do przechowywania danych ucznia,
-
-klasę Kolekcja do zarządzania listą,
-
-vector<Uczen> jako dynamiczną kolekcję danych,
-
-funkcję sort() do sortowania,
-
-operacje na plikach tekstowych,
-
-instrukcję switch do obsługi menu,
-
-pętlę do...while do wielokrotnego wyświetlania menu.
-
-📌 Uwagi
-
-Zmiany wprowadzone podczas działania programu są wykonywane w pamięci. Aby zachować je po zakończeniu programu, należy użyć opcji:
-
-3 - zapisz do pliku
-
-
-Jeżeli program zostanie zamknięty bez zapisania zmian, zmiany zostaną utracone.
-
-👨‍💻 Autor
-
-Projekt wykonany w języku C++ w ramach przygotowania do egzaminu INF.04.
+## Technologie
+- C++
+- Biblioteka `iostream`
+- Dynamiczna alokacja pamięci (`new` i `delete`)
